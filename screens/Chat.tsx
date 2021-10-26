@@ -6,11 +6,9 @@ import {
   Button,
   TextInput,
   Keyboard,
-  FlatList,
 } from "react-native";
 import MessageList from '../components/MessageList';
 import {AWS_SOCKET_URL} from '@env';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const Chat: FC = ({children, navigation}): JSX.Element => {
   
@@ -84,8 +82,6 @@ const Chat: FC = ({children, navigation}): JSX.Element => {
         onChangeText={(text) => setMessageInput(text)}
         value={messageInput}
       ></TextInput>
-
-      
 
     </View>
   )

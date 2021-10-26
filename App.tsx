@@ -1,5 +1,27 @@
 
 import * as React from 'react';
+import { GRAPHQL_API_URL } from '@env';
+
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
+import { createAuthLink, AuthOptions,AUTH_TYPE } from "aws-appsync-auth-link";
+import { createSubscriptionHandshakeLink } from "aws-appsync-subscription-link";
+
+import { ApolloLink } from "apollo-link";
+import { createHttpLink, HttpLink } from "apollo-link-http";
+
+// import {AWSAppSyncClient} from "aws-appsync";
+
+import appSyncConfig from "./aws-exports";
+
+const url = appSyncConfig.aws_appsync_graphqlEndpoint;
+const region = appSyncConfig.aws_appsync_region;
+const auth : AuthOptions = {
+  type: AUTH_TYPE.API_KEY,
+  apiKey: appSyncConfig.aws_appsync_apiKey,
+  // jwtToken: async () => token, // Required when you use Cognito UserPools OR OpenID Connect. token object is obtained previously
+  // credentials: async () => credentials, // Required when you use IAM-based auth.
+};
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -11,15 +33,31 @@ import Chat from './screens/Chat';
 
 const Stack = createNativeStackNavigator();
 
+const httpLink = createHttpLink({ uri: url });
+// const httpLink = new HttpLink({ uri: url });
+
+//cast as any fromn ApolloLink to fix issue with link?
+const link: any = ApolloLink.from([
+  createAuthLink({ url, region, auth }),
+  createSubscriptionHandshakeLink({ url, region, auth }, httpLink),
+]);
+
+const client = new ApolloClient({
+  link: link,
+  cache: new InMemoryCache(),
+});
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Menu Screen">
-      <Stack.Screen name="Test Screen" component={TestScreen} options={{ title: 'Home' }}/>
-        <Stack.Screen name="Menu Screen" component={Menu} options={{ title: 'This is the title' }}/>
-        <Stack.Screen name="Chats Screen" component={ChatsScreen} />
-        <Stack.Screen name="Chat Screen" component={Chat} options={{ title: 'Chat' }}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ApolloProvider client={client}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Menu Screen">
+          <Stack.Screen name="Test Screen" component={TestScreen} options={{ title: 'Home' }}/>
+          <Stack.Screen name="Menu Screen" component={Menu} options={{ title: 'This is the title' }}/>
+          <Stack.Screen name="Chats Screen" component={ChatsScreen} />
+          <Stack.Screen name="Chat Screen" component={Chat} options={{ title: 'Chat' }}/>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ApolloProvider>
   );
 }
