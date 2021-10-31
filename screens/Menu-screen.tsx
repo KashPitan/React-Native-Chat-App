@@ -2,6 +2,10 @@ import React from 'react'
 import { Button, Text, View } from 'react-native';
 
 const Menu = ({navigation}) => {
+  React.useEffect(() => {
+  //  console.log( navigation);
+  //  console.log('typeof navigation ==> ', typeof navigation);
+  }, [])
   return (
     <View>
       <Text>Menu?</Text>

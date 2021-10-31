@@ -3,18 +3,19 @@ import { Text, View, StyleSheet, Alert } from 'react-native';
 import * as Location from 'expo-location';
 
 // import {createChatQuery} from '../queries';
+import { coordinates } from '../types';
 
 import ChatsList from '../components/ChatsList';
 import CreateChat from '../components/CreateChat';
 
-const ChatsScreen = ({navigation}) => {
+const ChatsScreen = ({}) => {
   const [locationServiceEnabled, setLocationServiceEnabled] = useState(false);
   const [displayCurrentAddress, setDisplayCurrentAddress] = useState(
     'Wait, we are fetching you location...'
   );
 
-  const [coordinates, setCoordinates] = useState<string | {latitude : number, longitude: number}>( 'Wait, we are fetching you location...');
-  const [liveLocation, setliveLocation] = useState<string | {latitude : number, longitude: number}>('Wait, we are fetching you location...')
+  const [coordinates, setCoordinates] = useState<coordinates | null>(null);
+  const [liveLocation, setliveLocation] = useState<coordinates | null>(null)
 
   useEffect(() => {
     CheckIfLocationEnabled();
@@ -75,24 +76,31 @@ const ChatsScreen = ({navigation}) => {
   const watchLocation = async () => {
     await Location.watchPositionAsync({
       accuracy: Location.Accuracy.BestForNavigation,
-      // distanceInterval: 1,
-      // timeInterval: 5000
+      distanceInterval: 2,
+      // timeInterval: 2
     }, (location) => {
-      // console.log('location ==> ', location);
+      console.log('location ==> ', location);
       setliveLocation({longitude :location.coords.longitude, latitude:location.coords.latitude})
     });
   }
 
-  
   return (
     <View>
       <View style={styles.container}>
         <View style={styles.messagesContainer}>
-          <ChatsList />
+          {liveLocation && <ChatsList location={liveLocation}/>}
+          
         </View>
       </View>
-     
-      <CreateChat />
+      {coordinates && 
+        <>
+          <Text>lat: {coordinates.latitude}</Text>
+          <Text>long: {coordinates.longitude}</Text>
+        </>
+      }
+      {liveLocation && <CreateChat location={liveLocation}/>}
+
+    
     </View>
   )
 }
@@ -110,25 +118,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignSelf:'center',
   },
-  // container: {
-  //   // flex: 1,
-  //   borderWidth: 2,
-  //   margin: 10,
-  //   padding: 10,
-  //   height: '70%',
-  //   width: '90%',
-  //   borderRadius: 5,
-  //   backgroundColor: "#fff",
-  //   // alignItems: "center",
-  //   alignSelf:'center',
-  //   // justifyContent: "center",
-  // },
   messagesContainer: {
     flex: 1,
-    // backgroundColor: "#fff",
     width: "80%",
-    // alignItems:"center",
-    // justifyContent: "center",
   },
   messageBox: {
     paddingTop: 10,
@@ -138,6 +130,5 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: "#fff",
     textAlign:'center',
-    // paddingLeft:20
   },
 });

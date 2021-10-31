@@ -10,7 +10,9 @@ import {
 import MessageList from '../components/MessageList';
 import {AWS_SOCKET_URL} from '@env';
 
-const Chat: FC = (): JSX.Element => {
+const GroupChatScreen: FC = ({route, children}): JSX.Element => {
+
+  const {id} = route.params;
   
   const [messageInput, setMessageInput] = useState<string>("");
   const [messages, setMessages] = useState<string[]>([]);
@@ -19,13 +21,13 @@ const Chat: FC = (): JSX.Element => {
   const [socket,setSocket] = useState<WebSocket>();
 
   useEffect(() => {
+    console.log('route.params ==> ', route.params);
     if(AWS_SOCKET_URL){
-      const socket = new WebSocket(`${AWS_SOCKET_URL}?chatId=test`);
+      const socket = new WebSocket(`${AWS_SOCKET_URL}?chatId=${id}`);
       setSocket(socket);
 
       socket.addEventListener('open', e => {
         console.log('WebSocket is connected')
-        // setSocketId(socket.);
         setConnected(true);
       })
 
@@ -37,10 +39,10 @@ const Chat: FC = (): JSX.Element => {
 
       socket.addEventListener("message", e => {
         if(typeof e.data){//check for internal server errors
-        // console.log(JSON.parse(e));
-        console.log('e ==> ', e);
+          // console.log(JSON.parse(e));
+          console.log('e ==> ', e);
 
-        setMessages((prevState) => [...prevState, e.data]);
+          setMessages((prevState) => [...prevState, e.data]);
         }
       });
 
@@ -48,17 +50,15 @@ const Chat: FC = (): JSX.Element => {
 
       //helps prevent duplicate websocket events by closing websocket when done
       return () => {
-        socket.close()
+        socket.close();
       }
 
     }
   }, []);
 
   const sendMessage = () => {
-    // socket.emit("chat", { user: username, message: messageInput });
-    const message = { action: "message", data: {message: messageInput, chatId: 'test'}};
+    const message = { action: "message", data: {message: messageInput, chatId: id}};
     socket?.send(JSON.stringify(message));
-    console.log('messages ==> ', messages);
     setMessageInput("");
     Keyboard.dismiss();
   };
@@ -87,11 +87,10 @@ const Chat: FC = (): JSX.Element => {
   )
 }
 
-export default Chat;
+export default GroupChatScreen;
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     borderWidth: 2,
     margin: 10,
     padding: 10,
@@ -99,14 +98,10 @@ const styles = StyleSheet.create({
     width: '90%',
     borderRadius: 5,
     backgroundColor: "#fff",
-    // alignItems: "center",
     alignSelf:'center',
-    // justifyContent: "center",
   },
   messagesContainer: {
     flex: 1,
-    // backgroundColor: "#fff",
-    // alignItems: "center",
     alignItems:"flex-start",
     justifyContent: "center",
   },
@@ -118,7 +113,6 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: "#fff",
     textAlign:'center',
-    // paddingLeft:20
   },
 });
 

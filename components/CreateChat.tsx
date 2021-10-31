@@ -1,23 +1,44 @@
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Button, Text, TextInput, View, StyleSheet } from 'react-native';
-
 import {
   useMutation,
   gql
 } from "@apollo/client";
 
-const CreateChat = () => {
+import { coordinates } from '../types'; 
+
+const CreateChat: FC<{location: coordinates | null}> = ({ children, location }) => {
   const [createChatText, setCreateChatText] = useState<string>('');
 
+  const locationInput = gql`
+    input LocationInput{
+      longitude: Float!
+      latitude: Float!
+    }
+  `
+
   const CREATE_CHAT_QUERY = gql`
-    mutation createChat ($name: String!) {
-      createChat(name: $name) {
-        name
+    mutation createChat ($name: String!, $location: LocationInput!) {
+      createChat(name: $name, location: $location) {
+        location {
+          longitude
+          latitude
+          }
+          name
       }
     }
   `;
 
+// latitude: Float!, longitude: Float!
+
   const [createChatMutation, { data, loading, error }] = useMutation(CREATE_CHAT_QUERY);
+
+  useEffect(() => {
+    console.log('location ==> ', location);
+    // console.log('getChatsQuery ==> ', CREATE_CHAT_QUERY.definitions);
+    }, [])
+  
+  
 
   useEffect(() => {
     if(error){
@@ -33,7 +54,7 @@ const CreateChat = () => {
 
   const createChatButtonHandler = async() => {
     //sends the api mutation request
-    await createChatMutation({variables: { name:createChatText }});
+    await createChatMutation({variables: { name:createChatText, location: location}});
     setCreateChatText('');
   }
   
@@ -44,12 +65,20 @@ const CreateChat = () => {
         <Button title='Create Chat' onPress={() => createChatButtonHandler()}/>
       </View>
 
+      {/* {location && 
+        <>
+          <Text>lat: {location.latitude}</Text>
+          <Text>long: {location.longitude}</Text>
+        </>
+      } */}
+      
+
       <TextInput
         style={styles.messageBox}
         placeholder="enter a message..."
         onChangeText={(text) => setCreateChatText(text)}
         value={createChatText}
-      ></TextInput>
+        />
 
     </View>
   )

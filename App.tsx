@@ -1,6 +1,5 @@
 
 import * as React from 'react';
-import { GRAPHQL_API_URL } from '@env';
 
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
@@ -11,14 +10,20 @@ import { ApolloLink } from "apollo-link";
 import { createHttpLink, HttpLink } from "apollo-link-http";
 
 // import {AWSAppSyncClient} from "aws-appsync";
+import {GRAPHQL_API_URL, GRAPHQL_API_KEY} from '@env';
+
 
 import appSyncConfig from "./aws-exports";
 
-const url = appSyncConfig.aws_appsync_graphqlEndpoint;
+//env file changes not loading in??
+// const url = appSyncConfig.aws_appsync_graphqlEndpoint;
+const url = GRAPHQL_API_URL;
+
 const region = appSyncConfig.aws_appsync_region;
 const auth : AuthOptions = {
   type: AUTH_TYPE.API_KEY,
-  apiKey: appSyncConfig.aws_appsync_apiKey,
+  // apiKey: appSyncConfig.aws_appsync_apiKey,
+  apiKey: GRAPHQL_API_KEY
   // jwtToken: async () => token, // Required when you use Cognito UserPools OR OpenID Connect. token object is obtained previously
   // credentials: async () => credentials, // Required when you use IAM-based auth.
 };
@@ -30,6 +35,8 @@ import TestScreen from './screens/Test-screen';
 import Menu from './screens/Menu-screen';
 import ChatsScreen from './screens/Chats-screen';
 import Chat from './screens/Chat';
+import GroupChatScreen from './screens/GroupChat-screen';
+import { useEffect } from 'react';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +55,12 @@ const client = new ApolloClient({
 });
 
 export default function App() {
+
+  //env file changes not loading in??
+  // useEffect(() => {
+  //   console.log('{ url, region, auth } ==> ', { url, region, auth });
+  // }, [])
+  
   return (
     <ApolloProvider client={client}>
       <NavigationContainer>
@@ -56,6 +69,7 @@ export default function App() {
           <Stack.Screen name="Menu Screen" component={Menu} options={{ title: 'This is the title' }}/>
           <Stack.Screen name="Chats Screen" component={ChatsScreen} />
           <Stack.Screen name="Chat Screen" component={Chat} options={{ title: 'Chat' }}/>
+          <Stack.Screen name="Group Chat Screen" component={GroupChatScreen} options={{ title: 'Group Chat' }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </ApolloProvider>
