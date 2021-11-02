@@ -1,5 +1,6 @@
 import React from 'react'
-import { Button, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+import { Button, Center, VStack } from "native-base"
 
 const Menu = ({navigation}) => {
   React.useEffect(() => {
@@ -7,29 +8,26 @@ const Menu = ({navigation}) => {
   //  console.log('typeof navigation ==> ', typeof navigation);
   }, [])
   return (
-    <View>
-      <Text>Menu?</Text>
-       <View style={{marginBottom: 20,marginTop: 20}}>
+    <Center flex={1} px="3">
+      <VStack space={4} alignItems="center">
+
         <Button
-          title="Go to individual chat Screen"
+          colorScheme="teal"
           onPress={() => navigation.push('Chat Screen')}
-        />
-      </View>
+        >Go to individual chat Screen</Button>
 
-      <View style={{marginBottom: 20,marginTop: 20}}>
         <Button
-          title="Go to Chats Screen"
+          colorScheme="teal"
           onPress={() => navigation.push('Chats Screen')}
-        />
-      </View>
+        >Go to Chats Screen</Button>
 
-      <View style={{marginBottom: 20,marginTop: 20}}>
         <Button
-          title="Go to Test Screen"
+          colorScheme="teal"
           onPress={() => navigation.push('Test Screen')}
-        />
-      </View>
-    </View>
+        >Go to Test Screen</Button>
+    </VStack>
+    </Center>
+    
   )
 }
 export default Menu;

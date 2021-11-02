@@ -7,7 +7,8 @@ import {
 import {coordinates} from '../types';
 
 import { useNavigation } from '@react-navigation/native';
-
+import { Center, Heading, HStack, Spinner } from "native-base";
+import ChatListItem from './ChatListItem';
 
 const ChatsList: FC<{location: coordinates | null}> = ({ location }) :JSX.Element => {
   const navigation = useNavigation();
@@ -56,19 +57,36 @@ const ChatsList: FC<{location: coordinates | null}> = ({ location }) :JSX.Elemen
 
   return (
     <>
-      <Text>Available Chats</Text>
-      {loading && <Text>loading...</Text>}
+    <Center>
+      <Heading bold={true} fontSize="2xl">
+        Available Chats
+      </Heading>
+
+      {loading &&
+        <>
+          <HStack space={2} alignItems="center">
+            <Spinner size="lg" accessibilityLabel="Loading posts" />
+            <Heading color="primary.500" fontSize="2xl">
+              Loading
+            </Heading>
+          </HStack>
+        </>
+      }
+
+    </Center>
+      
+      
       {error && <Text>error...</Text>}
       {data && 
         <FlatList
           keyExtractor={(item, index) => index.toString()}
           data={data?.getNearChats}
           renderItem={(item) => 
-            <TouchableOpacity onPress={() => onPressChatHandler(item.item.id)} style={styles.message}>
-              <Text >{item.item.name}</Text>
-            </TouchableOpacity>}
+            <ChatListItem chat={item.item}/>
+          }
         />
       }
+
       {location && 
         <>
           <Text>lat: {location.latitude}</Text>

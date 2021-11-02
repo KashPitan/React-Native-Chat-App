@@ -1,27 +1,21 @@
+import { Box, Text } from "native-base";
 import React, { FC } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 const MessageItem: FC<{message: string}> = ({ message }): JSX.Element => {
   return (
     <>
-      <View style={styles.message}>
-        <Text style={{ fontWeight: "bold" }}>message:</Text>
-        <Text>{message}</Text> 
-      </View>
+      <Box
+        bg="cyan.700"
+        p="2"
+        m="1"
+        rounded="10">
+        <Text color="cyan.50" mr="3" fontWeight="medium" fontSize={15}>
+          {message}
+        </Text>
+      </Box>
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  message: {
-    paddingTop: 10,
-    padding:20,
-    borderWidth: 1,
-    borderRadius: 10,
-    margin: 3,
-    fontWeight: "bold",
-    backgroundColor: "#add8e6",
-  },
-});
 
 export default MessageItem;

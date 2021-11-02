@@ -1,12 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 import {
   StyleSheet,
-  Text,
   View,
-  Button,
-  TextInput,
   Keyboard,
 } from "react-native";
+import { Button, Input, Text} from "native-base"
 import MessageList from '../components/MessageList';
 import {AWS_SOCKET_URL} from '@env';
 
@@ -65,24 +63,25 @@ const GroupChatScreen: FC = ({route, children}): JSX.Element => {
 
   return (
     <View>
-      
       <View style={styles.container}>
         <View style={styles.messagesContainer}>
           {messages && <MessageList messages={messages} />}
         </View>
       </View>
 
-      <View style={{margin: 20}}>
-        <Button title='Send' onPress={() => sendMessage()}/>
-      </View>
-
-      <TextInput
-        style={styles.messageBox}
-        placeholder="enter a message..."
-        onChangeText={(text) => setMessageInput(text)}
-        value={messageInput}
-      ></TextInput>
-
+      <Button m='3' colorScheme="teal" onPress={() => sendMessage()}>
+          <Text fontSize='lg' color='white'>Send</Text>
+        </Button>
+        <Input
+          variant="rounded"
+          p='3'
+          m='2'
+          size="lg"
+          fontSize='lg'
+          backgroundColor='white'
+          placeholder="enter a message..."
+          onChangeText={(text) => setMessageInput(text)}
+          value={messageInput}/>
     </View>
   )
 }
@@ -104,15 +103,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems:"flex-start",
     justifyContent: "center",
-  },
-  messageBox: {
-    paddingTop: 10,
-    paddingBottom: 20,
-    borderWidth: 1,
-    borderRadius: 10,
-    margin: 20,
-    backgroundColor: "#fff",
-    textAlign:'center',
   },
 });
 

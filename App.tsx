@@ -11,9 +11,19 @@ import { createHttpLink, HttpLink } from "apollo-link-http";
 
 // import {AWSAppSyncClient} from "aws-appsync";
 import {GRAPHQL_API_URL, GRAPHQL_API_KEY} from '@env';
-
-
 import appSyncConfig from "./aws-exports";
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import { NativeBaseProvider, Box } from 'native-base';
+
+import TestScreen from './screens/Test-screen';
+import Menu from './screens/Menu-screen';
+import ChatsScreen from './screens/Chats-screen';
+import Chat from './screens/Chat';
+import GroupChatScreen from './screens/GroupChat-screen';
+import { useEffect } from 'react';
 
 //env file changes not loading in??
 // const url = appSyncConfig.aws_appsync_graphqlEndpoint;
@@ -27,16 +37,6 @@ const auth : AuthOptions = {
   // jwtToken: async () => token, // Required when you use Cognito UserPools OR OpenID Connect. token object is obtained previously
   // credentials: async () => credentials, // Required when you use IAM-based auth.
 };
-
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import TestScreen from './screens/Test-screen';
-import Menu from './screens/Menu-screen';
-import ChatsScreen from './screens/Chats-screen';
-import Chat from './screens/Chat';
-import GroupChatScreen from './screens/GroupChat-screen';
-import { useEffect } from 'react';
 
 const Stack = createNativeStackNavigator();
 
@@ -63,15 +63,17 @@ export default function App() {
   
   return (
     <ApolloProvider client={client}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Menu Screen">
-          <Stack.Screen name="Test Screen" component={TestScreen} options={{ title: 'Home' }}/>
-          <Stack.Screen name="Menu Screen" component={Menu} options={{ title: 'This is the title' }}/>
-          <Stack.Screen name="Chats Screen" component={ChatsScreen} />
-          <Stack.Screen name="Chat Screen" component={Chat} options={{ title: 'Chat' }}/>
-          <Stack.Screen name="Group Chat Screen" component={GroupChatScreen} options={{ title: 'Group Chat' }}/>
-        </Stack.Navigator>
-      </NavigationContainer>
+      <NativeBaseProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Menu Screen">
+            <Stack.Screen name="Test Screen" component={TestScreen} options={{ title: 'Home' }}/>
+            <Stack.Screen name="Menu Screen" component={Menu} options={{ title: 'Menu' }}/>
+            <Stack.Screen name="Chats Screen" component={ChatsScreen} />
+            <Stack.Screen name="Chat Screen" component={Chat} options={{ title: 'Chat' }}/>
+            <Stack.Screen name="Group Chat Screen" component={GroupChatScreen} options={{ title: 'Group Chat' }}/>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </NativeBaseProvider>
     </ApolloProvider>
   );
 }
